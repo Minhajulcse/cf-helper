@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CF-Helper</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Controls -->
+        <aside class="sidebar mode-contest" id="main-sidebar">
+            <div class="header">
+                <h1>CF-Helper</h1>
+                <p>Practice targeted programming problems</p>
+            </div>
+
+            <!-- Mode Toggle -->
+            <div class="toggle-group" id="mode-toggles">
+                <button class="toggle-btn active" data-type="type" data-val="contest">Contest</button>
+                <button class="toggle-btn" data-type="type" data-val="problems">Problems</button>
+            </div>
+
+            <!-- Platform Toggle -->
+            <div class="toggle-group">
+                <button class="toggle-btn active" data-type="platform" data-val="cf">Codeforces</button>
+                <button class="toggle-btn" data-type="platform" data-val="ac" disabled title="AtCoder coming soon">AtCoder</button>
+                <button class="toggle-btn" data-type="platform" data-val="both" disabled>Both</button>
+            </div>
+
+            <!-- EXPLICIT PRACTICE MODE TOGGLE -->
+            <div class="filter-section" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
+                <h3>PRACTICE MODE</h3>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" data-type="practice-mode" data-val="group" title="Find problems no one in the group has solved">Group Unsolved</button>
+                    <button class="toggle-btn" data-type="practice-mode" data-val="target" title="Find problems the group solved, but the target missed">Target Blind Spots</button>
+                </div>
+            </div>
+
+            <!-- Group Handles -->
+            <div class="input-section">
+                <label id="group-handle-label">Group Handles (Comma separated)</label>
+                <input type="text" id="group-handles" class="text-input" value="" placeholder="e.g. tourist, Benq">
+                <div id="group-user-cards" class="user-cards"></div>
+            </div>
+
+            <!-- Target Handle (Feature 2 Comparison) - HIDDEN BY DEFAULT -->
+            <div class="input-section hidden-feature" id="target-handle-section">
+                <label>Target Handle (Who needs practice?)</label>
+                <input type="text" id="target-handle" class="text-input" placeholder="e.g. NoObMin">
+                <div id="target-user-cards" class="user-cards"></div>
+            </div>
+
+            <div class="filter-section">
+                <!-- CF Source -->
+                <h3>CF SOURCE</h3>
+                <div class="toggle-group multi">
+                    <button class="toggle-btn active" data-filter="source" data-val="normal">Normal</button>
+                    <button class="toggle-btn" data-filter="source" data-val="gym">Gym</button>
+                    <button class="toggle-btn" data-filter="source" data-val="both">Both</button>
+                </div>
+
+                <!-- CF Divisions - Wrapped to easily hide when Gym is selected -->
+                <div id="division-section">
+                    <h3>CF DIVISIONS</h3>
+                    <div class="toggle-group multi wrap" id="div-filters">
+                        <button class="toggle-btn" data-filter="div" data-val="Div. 1">Div. 1</button>
+                        <button class="toggle-btn active" data-filter="div" data-val="Div. 2">Div. 2</button>
+                        <button class="toggle-btn" data-filter="div" data-val="Div. 3">Div. 3</button>
+                        <button class="toggle-btn" data-filter="div" data-val="Div. 4">Div. 4</button>
+                        <button class="toggle-btn" data-filter="div" data-val="Edu">Edu</button>
+                        <button class="toggle-btn" data-filter="div" data-val="Global">Global</button>
+                        <button class="toggle-btn" data-filter="div" data-val="Other">Other</button>
+                    </div>
+                </div>
+
+                <!-- Problem-specific Filters - HIDDEN IN CONTEST MODE -->
+                <div class="problems-only">
+                    <h3>PROBLEM INDEX</h3>
+                    <div class="toggle-group multi wrap" id="index-filters">
+                        <button class="toggle-btn" data-filter="index" data-val="A">A</button>
+                        <button class="toggle-btn" data-filter="index" data-val="B">B</button>
+                        <button class="toggle-btn" data-filter="index" data-val="C">C</button>
+                        <button class="toggle-btn" data-filter="index" data-val="D">D</button>
+                        <button class="toggle-btn" data-filter="index" data-val="E">E</button>
+                        <button class="toggle-btn" data-filter="index" data-val="F">F</button>
+                    </div>
+
+                    <h3>CATEGORIES (Must include ALL selected)</h3>
+                    <div class="tags-container" id="tags-filters">
+                        <button class="tag-toggle" data-filter="tag" data-val="dp">DP</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="math">Math</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="greedy">Greedy</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="graphs">Graphs</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="data structures">Data Structs</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="brute force">Brute Force</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="constructive algorithms">Constructive</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="binary search">Binary Search</button>
+                        <button class="tag-toggle" data-filter="tag" data-val="number theory">Number Theory</button>
+                    </div>
+
+                    <h3>RATING RANGE</h3>
+                    <div class="rating-inputs">
+                        <input type="number" id="min-rating" class="text-input" value="800" min="800" step="100" placeholder="Min (800)">
+                        <input type="number" id="max-rating" class="text-input" min="800" step="100" placeholder="Max (3500)">
+                    </div>
+                </div>
+
+                <!-- Recency & Limit -->
+                <div class="grid-2-col" style="margin-top: 1rem;">
+                    <div>
+                        <h3>RECENCY</h3>
+                        <select id="recency-filter" class="select-input">
+                            <option value="0">All Time</option>
+                            <option value="15552000" selected>Past 6 Months</option>
+                            <option value="31536000">Past 1 Year</option>
+                            <option value="63072000">Past 2 Years</option>
+                            <option value="157680000">Past 5 Years</option>
+                        </select>
+                    </div>
+                    <div class="problems-only">
+                        <h3>RESULT LIMIT</h3>
+                        <input type="number" id="result-limit" class="text-input" value="5" min="1" max="500">
+                    </div>
+                </div>
+            </div>
+
+            <button id="generate-btn" class="primary-btn">Generate Contest</button>
+
+            <!-- Developer Credits -->
+            <div class="developer-credit">
+                Developed by <strong>Minhajul Islam</strong><br>
+                CF Handle: <a href="https://codeforces.com/profile/NoObMin" target="_blank" class="cf-link">NoObMin</a>
+            </div>
+
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div id="loader" class="hidden">
+                <div class="spinner"></div>
+                <p>Fetching data from Codeforces...</p>
+            </div>
+            
+            <div id="error-msg" class="hidden error-card"></div>
+
+            <!-- Result Panel -->
+            <section id="result-panel" class="panel hidden">
+                <!-- Content injected via JS -->
+            </section>
+
+            <!-- History Panel -->
+            <section class="panel history-panel">
+                <div class="panel-header">
+                    <h2>Recent Generations</h2>
+                    <button id="clear-history" class="text-btn">Clear</button>
+                </div>
+                <div class="history-grid" id="history-grid">
+                    <p class="empty-state">No recent searches.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
